@@ -20,3 +20,5 @@ separate repository, every behaviour that cannot be verified locally.
 The procedure, the items to observe (G1–G7) and where the observations are recorded live in the
 mod-base repository: `docs/OPERATIONS.md`, sections "Canary procedure" and "Canary evidence".
 Nothing on the published site describes a real mod, release or download.
+
+Canary cycle note: documentation-only commit for the carried-family observation.
