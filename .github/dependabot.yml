@@ -12,6 +12,7 @@ updates:
     # which also re-synchronizes the managed files. A Dependabot bump would fail `template check`.
     ignore:
       - dependency-name: "The-Plum-Team/mod-base*"
+      - dependency-name: "actions/deploy-pages"
     groups:
       github-actions:
         patterns:
