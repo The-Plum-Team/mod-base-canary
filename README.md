@@ -24,3 +24,5 @@ Nothing on the published site describes a real mod, release or download.
 Canary cycle note: documentation-only commit for the carried-family observation.
 
 Carried-family canary cycle 2026-09-25.
+
+Carried-family canary cycle 2026-09-26.
