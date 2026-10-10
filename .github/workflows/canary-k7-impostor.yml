@@ -1,0 +1,33 @@
+# K7 ruleset experiment only: lives on the branch k7/rs-impostor, never on main. An ordinary
+# pull_request workflow whose two jobs carry exactly the names of the protected gate contexts, so
+# GitHub Actions (app 15368) reports two successful check runs with those names on the pull
+# request head. A ruleset that requires the contexts from the gate App (integration_id 5256389)
+# must not count them.
+name: K7 impostor checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  build-impostor:
+    name: Synthetic / Build and verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Succeed under the protected Build context name
+        shell: bash
+        run: echo "Ordinary workflow check named like the protected Build context; it must not satisfy the ruleset."
+
+  packaged-impostor:
+    name: Synthetic / Packaged E2E gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Succeed under the protected packaged context name
+        shell: bash
+        run: echo "Ordinary workflow check named like the protected packaged context; it must not satisfy the ruleset."
