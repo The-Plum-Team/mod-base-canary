@@ -1,0 +1,53 @@
+# K7 canary probe (canary-owned, not a kit file). Reads, with this job's GITHUB_TOKEN, the
+# repository's Actions token allowance (GET /rate_limit is not itself counted) and records the
+# hosted image's JDK homes. The operator's own `gh api rate_limit` reads the operator's allowance,
+# which managed caller runs never spend, so the per-generation consumption can only be read here.
+# Remove this file after K7 if it is not wanted for later canary cycles.
+name: K7 probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: Free text recorded with the snapshot ([A-Za-z0-9._-])
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: canary-k7-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Snapshot the repository token allowance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Read rate_limit with the job token and the image toolchains
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LABEL: ${{ inputs.label }}
+        run: |
+          set -euo pipefail
+          [[ "${LABEL:-}" =~ ^[A-Za-z0-9._-]{0,60}$ ]] || { echo "malformed label" >&2; exit 1; }
+          printf 'K7-LABEL %s\n' "${LABEL:-}"
+          printf 'K7-NOW %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          gh api -i rate_limit > "$RUNNER_TEMP/rate.txt"
+          tr -d '\r' < "$RUNNER_TEMP/rate.txt" > "$RUNNER_TEMP/rate.lf"
+          grep -i '^x-ratelimit-' "$RUNNER_TEMP/rate.lf" | sed 's/^/K7-HEADER /'
+          awk 'found { print } /^$/ { found = 1 }' "$RUNNER_TEMP/rate.lf" > "$RUNNER_TEMP/rate.json"
+          printf 'K7-CORE %s\n' "$(jq -c '.resources.core' "$RUNNER_TEMP/rate.json")"
+          printf 'K7-IMAGE %s %s\n' "${ImageOS:-unknown}" "${ImageVersion:-unknown}"
+          for version in 17 21 25; do
+            name="JAVA_HOME_${version}_X64"
+            home="${!name:-}"
+            if [[ -n "$home" && -x "$home/bin/java" ]]; then
+              printf 'K7-JAVA %s=%s %s\n' "$name" "$home" "$("$home/bin/java" -version 2>&1 | head -n 1)"
+            else
+              printf 'K7-JAVA %s=%s MISSING\n' "$name" "$home"
+            fi
+          done
