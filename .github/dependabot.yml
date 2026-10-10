@@ -13,6 +13,7 @@ updates:
     ignore:
       - dependency-name: "The-Plum-Team/mod-base*"
       - dependency-name: "actions/deploy-pages"
+      - dependency-name: "actions/create-github-app-token"
     groups:
       github-actions:
         patterns:
