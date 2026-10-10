@@ -23,8 +23,8 @@
     "path": "build/release"
   },
   "contexts": {
-    "build": "Synthetic / Build and verify",
-    "packaged": "Synthetic / Packaged E2E gate"
+    "build": "Candidate / Build",
+    "packaged": "Candidate / Packaged"
   },
   "inventory": {
     "path": "ci/synthetic/inventory.json"

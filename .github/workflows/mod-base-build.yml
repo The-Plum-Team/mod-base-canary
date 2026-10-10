@@ -67,3 +67,9 @@ jobs:
     with:
       kit-sha: ${{ needs.guard.outputs.kit-sha }}
       pr-number: ${{ format('{0}', github.event.pull_request.number) }}
+
+  candidate-only:
+    name: Candidate-only job
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "exists only in the pull request copy of the caller"
