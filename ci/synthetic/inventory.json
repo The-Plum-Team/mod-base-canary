@@ -24,5 +24,16 @@
       "sbom": false
     }
   ],
-  "faults": []
+  "faults": [
+    {
+      "hook": "build_target",
+      "unit": "1.20.1",
+      "mode": "orphan"
+    },
+    {
+      "hook": "build_target",
+      "unit": "1.21.1",
+      "mode": "hang"
+    }
+  ]
 }
